@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calefaccion Residencial APP Web</title>
+
+    <script type="text/javascript" src="functions.js"></script>
+    <script type="text/javascript" loading="lazy" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {
+            'packages': ['gauge']
+        });
+        google.charts.setOnLoadCallback(drawTemp);
+
+        function drawTemp() {
+
+            var data = google.visualization.arrayToDataTable([
+                ['Label', 'Value'],
+                ['Temperatura', 0],
+            ]);
+
+            var options = {
+                width: 250,
+                height: 250,
+                redFrom: 50,
+                redTo: 100,
+                yellowFrom: 20,
+                yellowTo: 50,
+                greenFrom: 0,
+                greenTo: 20,
+                majorTicks: ['0', '10', '20', '30', '40', '50', '60', '70', '80', '90', '100'],
+                minorTicks: 0,
+                max: 100,
+                min: 0
+            };
+
+            var chart = new google.visualization.Gauge(document.getElementById('startTemp'));
+
+            chart.draw(data, options);
+
+            setInterval(function() {
+                data.setValue(0, 1, 0 + Math.round(100 * Math.random()));
+                chart.draw(data, options);
+            }, 10000);
+        }
+    </script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load("current", {
+            packages: ["corechart"]
+        });
+
+        google.charts.setOnLoadCallback(drawTemp);
+
+        function drawTemp() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('number');
+            data.addColumn('number');
+
+            var radius = 100;
+            for (var i = 0; i < 6.28; i += 0.1) {
+                data.addRow([radius * Math.cos(i), radius * Math.sin(i)]);
+            }
+
+            // Our central point, which will jiggle.
+            data.addRow([0, 0]);
+
+            var options = {
+                legend: 'none',
+                colors: ['#087037'],
+                pointShape: 'star',
+                pointSize: 18,
+                animation: {
+                    duration: 200,
+                    easing: 'inAndOut',
+                }
+            };
+
+            var chart = new google.visualization.ScatterChart(document.getElementById('animatedshapes_div'));
+
+            // Start the animation by listening to the first 'ready' event.
+            google.visualization.events.addOneTimeListener(chart, 'ready', randomWalk);
+
+            // Control all other animations by listening to the 'animationfinish' event.
+            google.visualization.events.addListener(chart, 'animationfinish', randomWalk);
+
+            chart.draw(data, options);
+
+            function randomWalk() {
+                var x = data.getValue(data.getNumberOfRows() - 1, 0);
+                var y = data.getValue(data.getNumberOfRows() - 1, 1);
+                x += 5 * (Math.random() - 0.5);
+                y += 5 * (Math.random() - 0.5);
+                if (x * x + y * y > radius * radius) {
+                    // Out of bounds. Bump toward center.
+                    x += Math.random() * ((x < 0) ? 5 : -5);
+                    y += Math.random() * ((y < 0) ? 5 : -5);
+                }
+                data.setValue(data.getNumberOfRows() - 1, 0, x);
+                data.setValue(data.getNumberOfRows() - 1, 1, y);
+                chart.draw(data, options);
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <h1>Test de medicion de temperatura en la calefaccion de una caldera residencial</h1>
+    <h2></h2>
+    <table class="arrow">
+        <tr>
+            <td class="gauge" id="startTemp" style="border: 1px solid #ccc"></td>
+        </tr>
+    </table>
+
+    <div id="chart_div" style="width: 400px; height: 120px;"></div>
+
+    <img src="imagenes/foto1.jpg" id="foto"><br/><br/>
+    <button onclick="encender('on');">Encender</button>
+    <button onclick="encender('off');">Apagar</button>
+
+    <script type="text/javascript">
+        var num = 1;
+
+        function encender(modo) {
+            var foto = document.getElementById("foto");
+            if (modo === "on") {
+                foto.src = "imagenes/foto2.jpg";
+            } else {
+                if (modo === "off") {
+                    foto.src = "imagenes/foto1.jpg";
+                }
+            }
+        }
+    </script>
+    <script type="module">
+        // Import the functions you need from the SDKs you need import { initializeApp } from "https://www.gstatic.com/firebasejs/9.4.1/firebase-app.js"; import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.4.1/firebase-analytics.js"; // TODO: Add
+        SDKs for Firebase products that you want to use // https://firebase.google.com/docs/web/setup#available-libraries // Your web app's Firebase configuration // For Firebase JS SDK v7.20.0 and later, measurementId is optional const firebaseConfig
+        = { apiKey: "AIzaSyDGcD77nGaxZlwfzzK3gmfSWLJA8gXStMA", authDomain: "app-web-firebase-1eebf.firebaseapp.com", databaseURL: "https://app-web-firebase-1eebf-default-rtdb.firebaseio.com", projectId: "app-web-firebase-1eebf", storageBucket: "app-web-firebase-1eebf.appspot.com",
+        messagingSenderId: "232903557076", appId: "1:232903557076:web:221022ce69540391136041", measurementId: "G-TNMJM4DPBT" }; // Initialize Firebase const app = initializeApp(firebaseConfig); const analytics = getAnalytics(app);
+    </script>
+</body>
+
+</html>
